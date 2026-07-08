@@ -12,7 +12,8 @@ const BUNDLES = [
 
 export default function App() {
   const [role, setRole] = useState(null);
-  const [slug, setSlug] = useState("");
+  const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
   const [resellers, setResellers] = useState([]);
   const [activeReseller, setActiveReseller] = useState(null);
   const [delivery, setDelivery] = useState({ status: "normal", message: "Delivery running smoothly · orders sent within 10 minutes" });
@@ -64,10 +65,11 @@ export default function App() {
   };
 
   const loginReseller = async () => {
-    const { data } = await supabase.from("resellers").select("*, wallets(*), orders(*), reseller_prices(*)").eq("slug", slug).eq("status", "approved").single();
-    if (data) { setActiveReseller(data); setRole("reseller"); fetchDelivery(); }
-    else showToast("Not found or not approved");
-  };
+  if (!email || !password) { showToast("Enter email and password"); return; }
+  const { data } = await supabase.from("resellers").select("*, wallets(*), orders(*), reseller_prices(*)").eq("email", email).eq("password", password).eq("status", "approved").single();
+  if (data) { setActiveReseller(data); setRole("reseller"); fetchDelivery(); }
+  else showToast("Invalid email/password or not approved");
+};
 
   const pending = resellers.filter(r => r.status === "pending");
   const approved = resellers.filter(r => r.status === "approved");
@@ -81,7 +83,8 @@ export default function App() {
       <div style={{ color: "#8A8470", fontSize: 12, marginBottom: 36, letterSpacing: "0.1em" }}>AGENT PORTAL</div>
       <div style={{ width: "100%", maxWidth: 320, display: "flex", flexDirection: "column", gap: 12 }}>
         <button onClick={() => setRole("admin")} style={BP}><Shield size={16} /> Admin (Maxwell)</button>
-        <input placeholder="Reseller slug (e.g. kwame)" value={slug} onChange={e => setSlug(e.target.value)} style={INP} />
+        <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} style={INP} />
+<input placeholder="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} style={INP} />
         <button onClick={loginReseller} style={BS}><Users size={16} /> Reseller Login</button>
       </div>
       <Toast msg={toast} />

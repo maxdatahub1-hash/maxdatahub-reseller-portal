@@ -124,3 +124,4 @@ const [password, setPassword] = useState("");
             <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 8, marginBottom: 10 }}>
               {BUNDLES.map(b => <div key={b.id}><div style={{ color: "#5C5847", fontSize: 10 }}>{b.label}</div><input type="number" defaultValue={r.reseller_prices?.find(p=>p.bundle_id===b.id)?.price||b.base} onChange={e=>setPriceDraft(d=>({...d,[`${r.id}:${b.id}`]:e.target.value}))} style={INP}/></div>)}
             </div>
+            }
